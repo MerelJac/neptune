@@ -28,7 +28,7 @@ pipeline {
         stage('build') {
             steps {
                 sh '''
-                    apk add zip
+                    apk add zip curl
                     node --version
                     npm --version
                     npm install
@@ -36,19 +36,25 @@ pipeline {
                     cd ./dist
                     zip -r ../dist.zip ./
                     cd ..
-                    ls
+                    ls 
                 '''
             }
         }
-        // stage('push') {
-        //     steps {
-        //         script {
-        //             docker.withRegistry("https://artifactory.mjs.dops.stairways.ai", "art_creds") {
-        //                 dockerImage.push("latest")      
-        //             }
-        //         }
-        //     }
-        // }
+        stage('push') {
+            steps {
+                script {
+                    def artUser
+                    def artPass
+                    withCredentials([usernamePassword(credentialsId: 'art_creds', usernameVariable: 'artUsername', passwordVariable: 'artPassword')]) {
+                        artUser = artUsername
+                        artPass = artPassword
+                    }
+                    sh """
+                        curl -u${artUser}:${artPass} -T ./dist.zip "https://jfrog.mjs.dops.stairways.ai/artifactory/blob-repository/neptune-${BUILD_NUMBER}.zip"
+                    """
+                }
+            }
+        }
         // stage('deploy') {
         //     when { expression { params.FORCE_DEPLOY == true || env.BRANCH_NAME == 'master' } }
         //     steps {
