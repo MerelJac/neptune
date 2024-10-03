@@ -28,6 +28,7 @@ pipeline {
         stage('build') {
             steps {
                 sh '''
+                    apk add zip
                     node --version
                     npm --version
                     npm install
