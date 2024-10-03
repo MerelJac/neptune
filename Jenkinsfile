@@ -34,7 +34,7 @@ pipeline {
                     npm install
                     npm run build
                     cd ./dist
-                    zip ../dist.zip ./
+                    zip -r ../dist.zip ./
                     cd ..
                     ls
                 '''
