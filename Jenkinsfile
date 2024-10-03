@@ -27,7 +27,7 @@ pipeline {
         }
         stage('build') {
             steps {
-                sh ```
+                sh '''
                     node --version
                     npm --version
                     npm run build
@@ -35,7 +35,7 @@ pipeline {
                     zip ../dist.zip ./
                     cd ..
                     ls
-                ```
+                '''
             }
         }
         // stage('push') {
