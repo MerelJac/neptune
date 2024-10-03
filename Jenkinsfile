@@ -30,6 +30,7 @@ pipeline {
                 sh '''
                     node --version
                     npm --version
+                    npm install
                     npm run build
                     cd ./dist
                     zip ../dist.zip ./
