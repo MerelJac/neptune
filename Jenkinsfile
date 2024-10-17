@@ -56,7 +56,7 @@ pipeline {
             }
         }
         stage('deploy') {
-            when { expression { params.FORCE_DEPLOY == true || env.BRANCH_NAME == 'master' } }
+            when { expression { params.FORCE_DEPLOY == true || env.BRANCH_NAME == 'main' } }
             steps {
                 script {
 
