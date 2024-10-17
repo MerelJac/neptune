@@ -67,7 +67,7 @@ pipeline {
                         artPass = artPassword
                     }
 
-                    withCredentials([sshUserPrivateKey(credentialsId: 'jsu-ssh-creds', keyFileVariable: 'privateKey', passphraseVariable: 'keyPass', usernameVariable: 'userName')]) {
+                    withCredentials([sshUserPrivateKey(credentialsId: 'jenkins-ssh', keyFileVariable: 'privateKey', passphraseVariable: 'keyPass', usernameVariable: 'userName')]) {
                         def remote = [:]
                         remote.name = "neptune-host"
                         remote.host = "64.23.135.67"
