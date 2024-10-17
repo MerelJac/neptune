@@ -55,36 +55,36 @@ pipeline {
                 }
             }
         }
-        // stage('deploy') {
-        //     when { expression { params.FORCE_DEPLOY == true || env.BRANCH_NAME == 'master' } }
-        //     steps {
-        //         script {
+        stage('deploy') {
+            when { expression { params.FORCE_DEPLOY == true || env.BRANCH_NAME == 'master' } }
+            steps {
+                script {
 
-        //             def artUser
-        //             def artPass
-        //             withCredentials([usernamePassword(credentialsId: 'art_creds', usernameVariable: 'artUsername', passwordVariable: 'artPassword')]) {
-        //                 artUser = artUsername
-        //                 artPass = artPassword
-        //             }
+                    def artUser
+                    def artPass
+                    withCredentials([usernamePassword(credentialsId: 'art_creds', usernameVariable: 'artUsername', passwordVariable: 'artPassword')]) {
+                        artUser = artUsername
+                        artPass = artPassword
+                    }
 
-        //             withCredentials([sshUserPrivateKey(credentialsId: 'jsu-ssh-creds', keyFileVariable: 'privateKey', passphraseVariable: 'keyPass', usernameVariable: 'userName')]) {
-        //                 def remote = [:]
-        //                 remote.name = "debian-test-droplet-sfo03-01"
-        //                 remote.host = "147.182.253.167"
-        //                 remote.allowAnyHosts = true
-        //                 remote.user = userName
-        //                 remote.passphrase = keyPass
-        //                 remote.identityFile = privateKey
-        //                 sshCommand remote: remote, command: '''
-        //                     curl http://169.254.169.254/metadata/v1/id
-        //                     cd /usr/docker
-        //                     docker login https://artifactory.mjs.dops.stairways.ai --username ${artUser} --password ${artPass}
-        //                     docker compose pull
-        //                     docker compose up -d
-        //                 '''
-        //             }
-        //         }
-        //     }
-        // }
+                    withCredentials([sshUserPrivateKey(credentialsId: 'jsu-ssh-creds', keyFileVariable: 'privateKey', passphraseVariable: 'keyPass', usernameVariable: 'userName')]) {
+                        def remote = [:]
+                        remote.name = "neptune-host"
+                        remote.host = "64.23.135.67"
+                        remote.allowAnyHosts = true
+                        remote.user = userName
+                        remote.passphrase = keyPass
+                        remote.identityFile = privateKey
+                        sshCommand remote: remote, command:
+                        """
+                            curl http://169.254.169.254/metadata/v1/id
+                            cd /usr/docker/service
+                            curl -u${artUser}:${artPass} -L -O "https://jfrog.mjs.dops.stairways.ai/artifactory/blob-repository/neptune-${BUILD_NUMBER}.zip"
+                            unzip neptune-${BUILD_NUMBER}.zip -d .
+                        """       
+                    }
+                }
+            }
+        }
     }
 }
